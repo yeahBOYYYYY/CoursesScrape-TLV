@@ -49,7 +49,7 @@ def scrapeYear(browser: WebDriver, yearName: str) -> None:
         WebDriverWait(browser, config.TIMEOUT_FOR_SCRAPING).until(
             EC.any_of(
                 EC.visibility_of_element_located((By.ID, config.NEXT_PAGE_BUTTON_ID)),
-                EC.visibility_of_element_located((By.ID, config.PREV_PAGE_BUTTON_ID)),
+                EC.visibility_of_element_located((By.ID, config.PREV_PAGE_BUTTON_ID))
             )
         )
 

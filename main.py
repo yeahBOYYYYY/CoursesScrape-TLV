@@ -1,8 +1,8 @@
 """Main module to run the CoursesScrape-TLV project."""
-import pandas as pd
 
 import config, scrape_data, parse_pages
 import os
+import pandas as pd
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.service import Service as ChromeService

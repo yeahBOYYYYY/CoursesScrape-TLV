@@ -1,3 +1,5 @@
+"""Module for parsing and creating CSV file from locally saved HTML pages."""
+
 import config
 
 import os, re
@@ -45,20 +47,28 @@ class CourseData:
         return f"{{Number = {self.Number}; Group = {self.Group}; Name = {self.Name}; Faculty = {self.Faculty}; School = {self.School}; Year = {self.Year}; Instructor = {self.Instructor}; Method = {self.Method}; Building = {self.Building}; Room = {self.Room}; Day = {self.Day}; Hour = {self.Hour}; Semester = {self.Semester}}}"
 
     def toDict(self) -> dict[str, str]:
+        instructorStr = "\n".join(self.Instructor)
+        methodStr = "\n".join(self.Method)
+        buildingStr = "\n".join(self.Building)
+        roomStr = "\n".join(self.Room)
+        dayStr = "\n".join(self.Day)
+        hourStr = "\n".join(self.Hour)
+        semesterStr = "\n".join(self.Semester)
+
         return {
             "Number": self.Number,
             "Group": self.Group,
             "Name": self.Name,
-            "Faculty": self.Faculty,
-            "School": self.School,
+            "Instructor": instructorStr,
             "Year": self.Year,
-            "Instructor": self.Instructor,
-            "Method": self.Method,
-            "Building": self.Building,
-            "Room": self.Room,
-            "Day": self.Day,
-            "Hour": self.Hour,
-            "Semester": self.Semester
+            "Semester": semesterStr,
+            "Method": methodStr,
+            "School": self.School,
+            "Faculty": self.Faculty,
+            "Building": buildingStr,
+            "Room": roomStr,
+            "Day": dayStr,
+            "Hour": hourStr
         }
 
 
@@ -282,18 +292,35 @@ def separateCourses(coursesDataList: List[HtmlElement]) -> List[List[HtmlElement
 
 
 def convertToPandas(df: pd.DataFrame, coursesData: List[CourseData]) -> pd.DataFrame:
-    coursesDataSet : List[Dict[str, Optional[str] | List[str]]] = [course.toDict() for course in coursesData]
+    """
+    Append a list of course data objects to an existing Pandas DataFrame.
+
+    @param df: Existing DataFrame containing course data.
+    @param coursesData: List of CourseData objects to be appended.
+
+    @return: A new DataFrame combining the input DataFrame and the converted course data.
+    """
+    coursesDataSet: List[Dict[str, Optional[str] | List[str]]] = [course.toDict() for course in coursesData]
     coursesDataPandas: pd.DataFrame = pd.DataFrame(coursesDataSet)
 
     return pd.concat([df, coursesDataPandas], ignore_index=True, sort=False)
 
 
 def fileHandler() -> pd.DataFrame:
+    """
+    Process all temporary HTML files and extract course data into a Pandas DataFrame.
+    - Iterates through the HTML file generator.
+    - Extracts course elements.
+    - Splits and parses them into CourseData objects.
+    - Appends them to a cumulative DataFrame.
+    - Optionally deletes temporary files after processing.
+
+    @return: pd.DataFrame DataFrame containing all parsed course data.
+    """
     htmlFiles: Generator[Tuple[ElementTree, str], None, None] = openHTMLFileGenerator()
     df: pd.DataFrame = pd.DataFrame()
 
     for file, filename in htmlFiles:
-        print(filename)
         coursesList: List[HtmlElement] = getCoursesData(file)
         separatedCourses: List[List[HtmlElement]] = separateCourses(coursesList)
         coursesData: List[CourseData] = parseCourses(separatedCourses, filename)
