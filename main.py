@@ -1,6 +1,7 @@
 """Main module to run the CoursesScrape-TLV project."""
+import pandas as pd
 
-import config, scrape_data
+import config, scrape_data, parse_pages
 import os
 
 from selenium.webdriver import Chrome
@@ -16,10 +17,11 @@ def createTmpFolder() -> None:
     The folder path is defined in `config.TMP_FOLDER_NAME`. If the folder
     already exists, the function does nothing.
 
-    @return None
+    @return: None
     """
     if not os.path.exists(config.TMP_FOLDER_NAME):
         os.mkdir(config.TMP_FOLDER_NAME)
+
 
 def setupBrowser() -> WebDriver:
     """
@@ -31,7 +33,7 @@ def setupBrowser() -> WebDriver:
      - The browser automatically navigates to the site URL defined in
        `config.SITE_URL`.
 
-    @return WebDriver A configured Selenium WebDriver instance.
+    @return: WebDriver A configured Selenium WebDriver instance.
     """
     chrome_options = Options()
     if not config.GUI:
@@ -41,6 +43,7 @@ def setupBrowser() -> WebDriver:
     browser = Chrome(service=service, options=chrome_options)
     browser.get(config.SITE_URL)
     return browser
+
 
 def main() -> None:
     """
@@ -53,17 +56,16 @@ def main() -> None:
      4. Remove the temporary folder if `config.KEEP_TMP_FOLDER` is False.
      5. Quit the WebDriver instance.
 
-    @return None
+    @return: None
     """
     browser = setupBrowser()
-    
     createTmpFolder()
     scrape_data.scrapingHandler(browser)
-
+    browser.quit()
+    df: pd.DataFrame = parse_pages.fileHandler()
     if not config.KEEP_TMP_FOLDER:
         os.rmdir(config.TMP_FOLDER_NAME)
-
-    browser.quit()
+    df.to_csv(f"data.csv", index=False)
 
 
 if __name__ == "__main__":

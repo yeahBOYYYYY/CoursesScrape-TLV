@@ -10,7 +10,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-
 def getPossibleYears(browser: WebDriver) -> List[str]:
     """
     Retrieves all possible academic years available on the website.
@@ -18,15 +17,16 @@ def getPossibleYears(browser: WebDriver) -> List[str]:
     The function opens the year dropdown, extracts all options, and parses
     their accessible names to return a clean list of year strings.
 
-    @param browser Selenium WebDriver instance used to control the browser.
+    @param browser: Selenium WebDriver instance used to control the browser.
 
-    @return List[str] List of available academic years.
+    @return: List[str] List of available academic years.
     """
     yearPop = browser.find_element(By.ID, config.YEAR_DROPDOWN_ID)
     yearPop.click()
-    years = yearPop.find_elements(By.TAG_NAME, config.YEAR_DROPDOWN_OPTIONS_TAG_NAME)
+    years = yearPop.find_elements(By.TAG_NAME, "option")
     yearNames = [''.join(re.findall(r'\d', year.accessible_name))[4::] for year in years]
     return yearNames
+
 
 def scrapeYear(browser: WebDriver, yearName: str) -> None:
     """
@@ -39,14 +39,20 @@ def scrapeYear(browser: WebDriver, yearName: str) -> None:
     The function repeatedly clicks the "next page" button (configured in
     `config.NEXT_PAGE_BUTTON_ID`) until no further page is available.
 
-    @param browser Selenium WebDriver instance used to control the browser.
-    @param yearName Name of the academic year, used for naming saved HTML files.
+    @param browser: Selenium WebDriver instance used to control the browser.
+    @param yearName: Name of the academic year, used for naming saved HTML files.
 
-    @return None
+    @return: None
     """
     pageNumber = 0
     while True:
-        WebDriverWait(browser, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "body")))
+        WebDriverWait(browser, config.TIMEOUT_FOR_SCRAPING).until(
+            EC.any_of(
+                EC.visibility_of_element_located((By.ID, config.NEXT_PAGE_BUTTON_ID)),
+                EC.visibility_of_element_located((By.ID, config.PREV_PAGE_BUTTON_ID)),
+            )
+        )
+
         html = browser.page_source
         with open(f"{config.TMP_FOLDER_NAME}/{yearName}-{pageNumber}.html", "w", encoding="utf-8") as file:
             file.write(html)
@@ -57,21 +63,23 @@ def scrapeYear(browser: WebDriver, yearName: str) -> None:
             return
         pageNumber += 1
 
+
 def yearSwitcher(browser: WebDriver, yearIndex: int) -> None:
     """
     Switches the website to the desired academic year.
 
     Opens the year dropdown menu and selects the year at the given index.
 
-    @param browser   Selenium WebDriver instance used to control the browser.
-    @param yearIndex Index of the desired year in the dropdown options.
+    @param browser: Selenium WebDriver instance used to control the browser.
+    @param yearIndex: Index of the desired year in the dropdown options.
 
-    @return None
+    @return: None
     """
     yearPop = browser.find_element(By.ID, config.YEAR_DROPDOWN_ID)
     yearPop.click()
-    years = yearPop.find_elements(By.TAG_NAME, config.YEAR_DROPDOWN_OPTIONS_TAG_NAME)
+    years = yearPop.find_elements(By.TAG_NAME, "option")
     years[yearIndex].click()
+
 
 def setFaculty(browser: WebDriver) -> None:
     """
@@ -80,14 +88,15 @@ def setFaculty(browser: WebDriver) -> None:
     Opens the department dropdown and selects the option at the index defined
     in `config.DEPARTMENT_DROPDOWN_WANTED_OPTION_INDEX`.
 
-    @param browser Selenium WebDriver instance used to control the browser.
+    @param browser: Selenium WebDriver instance used to control the browser.
 
-    @return None
+    @return: None
     """
     depPop = browser.find_element(By.ID, config.DEPARTMENT_DROPDOWN_ID)
     depPop.click()
-    departments = depPop.find_elements(By.TAG_NAME, config.DEPARTMENT_DROPDOWN_OPTIONS_TAG_NAME)
+    departments = depPop.find_elements(By.TAG_NAME, "option")
     departments[config.DEPARTMENT_DROPDOWN_WANTED_OPTION_INDEX].click()
+
 
 def reset(browser: WebDriver) -> None:
     """
@@ -96,11 +105,12 @@ def reset(browser: WebDriver) -> None:
     Clicks the reset/new search button configured in
     `config.NEW_SEARCH_BUTTON_CLASS_NAME`.
 
-    @param browser Selenium WebDriver instance used to control the browser.
+    @param browser: Selenium WebDriver instance used to control the browser.
 
-    @return None
+    @return: None
     """
     browser.find_element(By.CLASS_NAME, config.NEW_SEARCH_BUTTON_CLASS_NAME).click()
+
 
 def scrapingHandler(browser: WebDriver) -> None:
     """
@@ -120,14 +130,14 @@ def scrapingHandler(browser: WebDriver) -> None:
         - Scrape pages
         - Reset search
     
-    @param browser Selenium WebDriver instance used to control the browser.
+    @param browser: Selenium WebDriver instance used to control the browser.
 
-    @return None
+    @return: None
     """
     possibleYears: List[str] = getPossibleYears(browser)
     wantedYears: List[str] = config.YEARS_TO_SCRAPE if config.YEARS_TO_SCRAPE is not None else possibleYears
-    yearsIndices: List[set] = [i for i in range(len(possibleYears)) if possibleYears[i] in wantedYears]
-    
+    yearsIndices: List[int] = [i for i in range(len(possibleYears)) if possibleYears[i] in wantedYears]
+
     for i in yearsIndices:
         yearSwitcher(browser, i)
         setFaculty(browser)

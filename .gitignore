@@ -5,3 +5,4 @@ venv
 *.csv
 main_old.py
 tmp_CoursesScrapeTLV
+data.*
