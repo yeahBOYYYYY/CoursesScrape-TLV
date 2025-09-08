@@ -1,27 +1,30 @@
-from settings import *
-import re
-import pandas as pd
-from typing import List
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service as ChromeService
+import settings, scrape_data
+import os
 
+from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.service import Service as ChromeService
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.webdriver import WebDriver as WebDriver
+
+
+def createTmpFolder() -> None:
+    if not os.path.exists(settings.TMP_FOLDER_NAME):
+        os.mkdir(settings.TMP_FOLDER_NAME)
 
 def main() -> None:
-    pass
+    chrome_options = Options()
+    if not settings.GUI:
+        chrome_options.add_argument("--headless=new")
+    service = ChromeService(executable_path=settings.CHROME_DRIVER_PATH)
+
+    browser = Chrome(service=service, options=chrome_options)
+    browser.get(settings.SITE_URL)
+    
+    createTmpFolder()
+    scrape_data.scrapingHandler(browser)
+
+    browser.quit()
 
 
 if __name__ == "__main__":
-    chrome_options = Options()
-    if not GUI:
-        chrome_options.add_argument("--headless=new")
-    service = ChromeService(executable_path=CHROME_DRIVER_PATH)
-
-    browser = webdriver.Chrome(service=service, options=chrome_options)
-    browser.get(SITE_URL)
     main()
-    browser.close()
