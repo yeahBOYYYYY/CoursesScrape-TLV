@@ -5,7 +5,6 @@ If you wish to modify any settings, please do so here."""
 from typing import List, Optional
 
 # ============================ Configurations ============================ #
-SITE_URL: str = 'https://www.ims.tau.ac.il/tal/kr/Search_P.aspx'  # The URL of the site to scrape
 CHROME_DRIVER_PATH: str = r"C:\WebDriver\chromedriver-win64\chromedriver.exe"  # The path to the ChromeDriver executable
 
 GUI: bool = False  # Weather the browser will be visible or not
@@ -18,6 +17,8 @@ KEEP_TMP_FOLDER: bool = False  # Whether to keep the temporary folder after scra
 TIMEOUT_FOR_SCRAPING = 60       # Number of seconds to wait for a web page before moving on
 
 # ============================ Site Elements Constants ============================ #
+SITE_URL: str = 'https://www.ims.tau.ac.il/tal/kr/Search_P.aspx'  # The URL of the site to scrape
+
 YEAR_DROPDOWN_ID: str = "lstYear"  # The ID of the year dropdown
 
 DEPARTMENT_DROPDOWN_ID: str = "lstDep6"  # The ID of the department dropdown, set by default to "Science"
