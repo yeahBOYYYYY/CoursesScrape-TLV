@@ -1,18 +1,20 @@
+"""Configuration file for the CoursesScrape-TLV project.
+This file contains various settings and constants used throughout the project.
+If you wish to modify any settings, please do so here."""
+
 from typing import List
 
 # ============================ Configurations ============================ #
+SITE_URL: str = 'https://www.ims.tau.ac.il/tal/kr/Search_P.aspx' # The URL of the site to scrape
+CHROME_DRIVER_PATH: str = r"C:\WebDriver\chromedriver-win64\chromedriver.exe" # The path to the ChromeDriver executable
 
-GUI = True                                  # Weather the browser will be visible or not
+GUI: bool = True                                  # Weather the browser will be visible or not
 
 YEARS_TO_SCRAPE: List[str] | None = None    # List of years to scrape, If empty it will scrape all years available, תשפ"ו = 2026
 
-
-
-# ============================ General Constants ============================ #
-SITE_URL: str = 'https://www.ims.tau.ac.il/tal/kr/Search_P.aspx'
-CHROME_DRIVER_PATH: str = r"C:\WebDriver\chromedriver-win64\chromedriver.exe"
-
 TMP_FOLDER_NAME: str = "tmp_CoursesScrapeTLV"  # The name of the temporary folder to store the HTML files
+KEEP_TMP_FOLDER: bool = False                     # Whether to keep the temporary folder after scraping or delete it
+
 
 
 # ============================ Site Elements Constants ============================ #
