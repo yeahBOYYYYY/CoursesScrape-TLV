@@ -1,6 +1,9 @@
 # CoursesScrape-TLV
 Scrapes courses data from the Tel-Aviv University servers.
 
+## Last Version
+
+The last output version of the scraper is located in [this file](data.xlsx) which was create by the [csv file](data.csv).
 
 ## Usage
 
