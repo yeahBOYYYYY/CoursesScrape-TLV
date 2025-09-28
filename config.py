@@ -7,6 +7,8 @@ from typing import List, Optional
 # ============================ Configurations ============================ #
 CHROME_DRIVER_PATH: str = r"C:\WebDriver\chromedriver-win64\chromedriver.exe"  # The path to the ChromeDriver executable
 
+FINAL_CSV_FILE_NAME: str = "data.csv"  # The name of the final CSV file to store the scraped data
+
 GUI: bool = False  # Weather the browser will be visible or not
 
 YEARS_TO_SCRAPE: Optional[List[str]] = None  # List of years to scrape, If empty it will scrape all years available, תשפ"ו = 2026

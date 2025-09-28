@@ -7,6 +7,8 @@ Scrapes courses data from the Tel-Aviv University servers.
 1. Download from here a [ChromeDriver](https://googlechromelabs.github.io/chrome-for-testing/), make sure it's the same version of the chrome you have installed.
 2. In [config.py](config.py) update to your local 'CHROME_DRIVER_PATH'.
 3. Run [main.py](main.py).
+4. After running there should be a file named "Data.csv" in the same folder as the script with all the courses information.
+5. You can import the file into Excel for cleaner view and filters usage, 'Excel -> Data -> From Text/CSV -> Data.csv".
 
 
 ## Configuration

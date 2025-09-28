@@ -65,7 +65,7 @@ def main() -> None:
     df: pd.DataFrame = parse_pages.fileHandler()
     if not config.KEEP_TMP_FOLDER:
         os.rmdir(config.TMP_FOLDER_NAME)
-    df.to_csv(f"data.csv", index=False)
+    df.to_csv(f"{config.FINAL_CSV_FILE_NAME}", index=False)
 
 
 if __name__ == "__main__":
